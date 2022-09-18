@@ -104,5 +104,15 @@ def draw_tour(Route, name, dis=None):
     x_title = {'size': 14}
     if dis is not None:
         plt.xlabel("Distance =" + str(dis), x_title)
-    plt.legend()
     plt.show()
+
+
+def adjacent_matrix(cities):
+    size = len(cities)
+    matrix = np.zeros((size, size))
+    for i in range(size):
+        for j in range(i+1, size):
+            dis = Dis(cities[i], cities[j])
+            matrix[i][j] = dis
+            matrix[j][i] = dis
+    return matrix
