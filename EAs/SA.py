@@ -1,6 +1,7 @@
 import math
 import random
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class SimAnneal(object):
@@ -22,19 +23,9 @@ class SimAnneal(object):
 
     def initial_solution(self):
         """
-        Greedy algorithm to get an initial solution (closest-neighbour).
+        random initialization
         """
-        cur_node = random.choice(self.nodes)  # start from a random node
-        solution = [cur_node]
-
-        free_nodes = set(self.nodes)
-        free_nodes.remove(cur_node)
-        while free_nodes:
-            next_node = min(free_nodes, key=lambda x: self.dist(cur_node, x))  # nearest neighbour
-            free_nodes.remove(next_node)
-            solution.append(next_node)
-            cur_node = next_node
-
+        solution = np.random.permutation(self.nodes)
         cur_fit = self.fitness(solution)
         if cur_fit < self.best_fitness:  # If best found so far, update best fitness
             self.best_fitness = cur_fit

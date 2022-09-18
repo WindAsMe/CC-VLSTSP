@@ -21,7 +21,7 @@ def GA_exe(places, NIND, Max_iter):
 
     """===========================调用算法模板进行种群进化========================"""
     [BestIndi, population] = myAlgorithm.run()  # 执行算法模板，得到最优个体以及最后一代种群
-
+    print(np.hstack([0, BestIndi.Phen[0, :], 0]))
     """==================================输出结果=============================="""
     return BestIndi.ObjV[0], np.hstack([0, BestIndi.Phen[0, :], 0]), myAlgorithm.trace['f_best']
 

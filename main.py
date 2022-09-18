@@ -3,9 +3,9 @@ import numpy as np
 import os
 import pandas as pd
 import helps
-from EAs import GA, PSO
+from EAs import GA, PSO, hCCGA
 from EAs.SA import SimAnneal
-import warnings
+from EAs import initial
 
 
 if __name__ == "__main__":
@@ -21,40 +21,29 @@ if __name__ == "__main__":
     # scales = [131]
     skip = 8
     trial_runs = 25
-    NIND = 100
-    Max_iter = 500
+    NIND = 10
+    Max_iter = 100
 
-    for inst in range(len(scales)):
+    for inst in range(1):
+        Greedy_best_path = os.path.dirname(os.path.abspath(__file__)) + "/Data/Greedy/best_Dis/" + names[inst] + ".csv"
+
         cities = helps.read_tsp(data_path + tsp_files[inst], skip)
+        adj_matrix = np.zeros((scales[inst], scales[inst]))
+        for i in range(len(cities)):
+            for j in range(i+1, len(cities)):
+                dis = helps.Dis(cities[i], cities[j])
+                adj_matrix[i][j] = dis
+                adj_matrix[j][i] = dis
+        cities_index = list(range(0, len(cities)))
+        greedy_tour = initial.greedy_initial(cities_index, adj_matrix)
+        best_Greedy = helps.verify_tour(cities, greedy_tour)
+        helps.write_result(Greedy_best_path, [best_Greedy])
+        # for run in range(1):
+        #
+        #     """Conventional GA, PSO, SA"""
+        #     # GA.GA_exe(cities, NIND, Max_iter)
+        #     best_fitness, best_tour = hCCGA.hCCGA_exe(cities, NIND, Max_iter, adj_matrix, sub_size=10)
+        #     print(helps.verify_tour(cities, best_tour))
+        #     print(best_fitness, best_tour)
 
-        for run in range(trial_runs):
-            GA_time_path = os.path.dirname(os.path.abspath(__file__)) + "/Data/GA/time/" + names[inst] + ".csv"
-            GA_best_path = os.path.dirname(os.path.abspath(__file__)) + "/Data/GA/best_Dis/" + names[inst] + ".csv"
 
-            PSO_time_path = os.path.dirname(os.path.abspath(__file__)) + "/Data/PSO/time/" + names[inst] + ".csv"
-            PSO_best_path = os.path.dirname(os.path.abspath(__file__)) + "/Data/PSO/best_Dis/" + names[inst] + ".csv"
-
-            SA_time_path = os.path.dirname(os.path.abspath(__file__)) + "/Data/SA/time/" + names[inst] + ".csv"
-            SA_best_path = os.path.dirname(os.path.abspath(__file__)) + "/Data/SA/best_Dis/" + names[inst] + ".csv"
-
-            """Conventional GA, PSO, SA"""
-            # time_GA_start = time.time()
-            # best_Dis_GA, Route_GA, trace_GA = GA.GA_exe(cities, NIND, Max_iter)
-            # helps.write_result(GA_best_path, best_Dis_GA)
-            # time_GA_end = time.time()
-            # helps.write_result(GA_time_path, [time_GA_end - time_GA_start])
-            # print("GA run time: ", time_GA_end - time_GA_start)
-            #
-            # time_PSO_start = time.time()
-            # best_Dis_PSO, Route_PSO, trace_PSO = PSO.PSO_exe(cities, NIND, Max_iter)
-            # helps.write_result(PSO_best_path, best_Dis_PSO)
-            # time_PSO_end = time.time()
-            # helps.write_result(PSO_time_path, [time_PSO_end - time_PSO_start])
-            # print("PSO run time: ", time_PSO_end - time_PSO_start)
-
-            time_SA_start = time.time()
-            sa = SimAnneal(cities, stopping_iter=int(NIND * Max_iter))
-            best_Dis = sa.anneal()
-            helps.write_result(SA_best_path, [best_Dis])
-            time_SA_end = time.time()
-            helps.write_result(SA_time_path, [time_SA_end - time_SA_start])

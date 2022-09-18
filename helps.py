@@ -116,3 +116,44 @@ def adjacent_matrix(cities):
             matrix[i][j] = dis
             matrix[j][i] = dis
     return matrix
+
+
+def centroid(sub_cities):
+    cities = np.array(sub_cities)
+    return [np.mean(cities[:, 0]), np.mean(cities[:, 1])]
+
+
+def merge_sub_cities(sub_cities, sub_cities_index, elites, label):
+    category = int(max(label))
+    merged_sub_cities = []
+    merged_sub_cities_index = []
+    merged_elites = []
+
+    for i in range(category):
+        merged_sub_cities.append([])
+        merged_sub_cities_index.append([])
+        merged_elites.append([])
+
+    for i in range(len(sub_cities)):
+        merged_sub_cities[int(label[i] - 1)].extend(sub_cities[i])
+        merged_sub_cities_index[int(label[i] - 1)].extend(sub_cities_index[i])
+        merged_elites[int(label[i] - 1)].extend(elites[i])
+    return merged_sub_cities, merged_sub_cities_index, merged_elites
+
+
+def iter_allocate(Max_iter, layers):
+    ave_iter = Max_iter / layers
+    iters = []
+    amount = 0
+    for i in range(layers-1):
+        iters.append(int(ave_iter))
+        amount += int(ave_iter)
+    iters.append(int(Max_iter - amount))
+    return iters
+
+
+def verify_tour(cities, tour):
+    dis = Dis(cities[tour[0]], cities[tour[len(tour)-1]])
+    for i in range(1, len(tour)):
+        dis += Dis(cities[tour[i]], cities[tour[i-1]])
+    return dis

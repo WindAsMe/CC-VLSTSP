@@ -1,5 +1,4 @@
 import copy
-
 import numpy as np
 from geatpy import scaling
 
@@ -13,10 +12,10 @@ def init_population(sub_cities, adj_matrix, NIND, K=20, strategy="softmax"):
     :param strategy: probability calculation strategy (softmax and normal)
     :return: generated population
     """
-    pop = []
-    for i in range(NIND):
+    pop = [greedy_initial(sub_cities, adj_matrix)]
+    for i in range(NIND-1):
         pop.append(generate_indi(sub_cities, adj_matrix, K, strategy))
-    return pop
+    return np.array(pop)
 
 
 def generate_indi(sub_cities, adj_matrix, K=20, strategy="softmax"):
@@ -90,3 +89,17 @@ def normal(fitness):
             return i
 
 
+def greedy_initial(sub_cities, adj_matrix):
+
+    temp_sub_cities = copy.deepcopy(sub_cities)
+    route = [temp_sub_cities[0]]
+    temp_sub_cities.remove(temp_sub_cities[0])
+    while len(temp_sub_cities) > 0:
+        current = route[len(route)-1]
+        Distance = []
+        for city in temp_sub_cities:
+            Distance.append(adj_matrix[city][current])
+        next = np.argmin(Distance)
+        route.append(temp_sub_cities[next])
+        temp_sub_cities.remove(temp_sub_cities[next])
+    return route
