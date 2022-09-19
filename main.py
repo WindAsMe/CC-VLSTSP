@@ -21,29 +21,19 @@ if __name__ == "__main__":
     # scales = [131]
     skip = 8
     trial_runs = 25
-    NIND = 10
-    Max_iter = 100
+    NIND = 100
+    Max_iter = 500
 
     for inst in range(1):
         Greedy_best_path = os.path.dirname(os.path.abspath(__file__)) + "/Data/Greedy/best_Dis/" + names[inst] + ".csv"
 
         cities = helps.read_tsp(data_path + tsp_files[inst], skip)
-        adj_matrix = np.zeros((scales[inst], scales[inst]))
-        for i in range(len(cities)):
-            for j in range(i+1, len(cities)):
-                dis = helps.Dis(cities[i], cities[j])
-                adj_matrix[i][j] = dis
-                adj_matrix[j][i] = dis
-        cities_index = list(range(0, len(cities)))
-        greedy_tour = initial.greedy_initial(cities_index, adj_matrix)
-        best_Greedy = helps.verify_tour(cities, greedy_tour)
-        helps.write_result(Greedy_best_path, [best_Greedy])
-        # for run in range(1):
-        #
-        #     """Conventional GA, PSO, SA"""
-        #     # GA.GA_exe(cities, NIND, Max_iter)
-        #     best_fitness, best_tour = hCCGA.hCCGA_exe(cities, NIND, Max_iter, adj_matrix, sub_size=10)
-        #     print(helps.verify_tour(cities, best_tour))
-        #     print(best_fitness, best_tour)
+        adj_matrix = helps.adjacent_matrix(cities)
+
+        for run in range(1):
+            # GA.GA_exe(cities, NIND, Max_iter)
+            best_fitness, best_tour = hCCGA.hCCGA_exe(cities, NIND, Max_iter, adj_matrix, sub_size=10, K=10)
+            print(helps.tour_Dis(best_tour, adj_matrix))
+            print(best_fitness, best_tour)
 
 

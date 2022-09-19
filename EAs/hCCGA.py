@@ -7,8 +7,9 @@ from EAs.templet.hCCGA_templet import soea_SEGA_templet
 from EAs import initial
 
 
-def hCCGA_exe(cities, NIND, Max_iter, adj_matrix, sub_size=50):
-    labels = helps.K_Nearest(cities, sub_size)
+def hCCGA_exe(cities, NIND, Max_iter, adj_matrix, sub_size=100, K=50):
+
+    labels = helps.K_Nearest(adj_matrix, sub_size)
     categories = int((len(cities) + sub_size - 1) / sub_size)
     layer = math.ceil(math.log2(categories)) + 1
     iters = helps.iter_allocate(Max_iter, layer)
@@ -21,28 +22,34 @@ def hCCGA_exe(cities, NIND, Max_iter, adj_matrix, sub_size=50):
     """The layer of hierarchy"""
     for i in range(layer):
         for j in range(len(sub_cities)):
-            best_sub_Dis, best_sub_route = sub_GA(sub_cities[j], sub_cities_index[j], adj_matrix, NIND, iters[i], elites[j])
+            best_sub_Dis, best_sub_route = sub_GA(sub_cities[j], sub_cities_index[j], adj_matrix, NIND, iters[i],
+                                                  elites[j], K)
+
             elites[j] = best_sub_route
-            if i == layer - 1:
-                best_fitness = best_sub_Dis
-                best_tour = best_sub_route
+
+        temp_best_tour = helps.list_combine(elites)
+        temp_best_fitness = helps.tour_Dis(temp_best_tour, adj_matrix)
+        if temp_best_fitness < best_fitness:
+            best_fitness = temp_best_fitness
+            best_tour = temp_best_tour
         centers = []
         for j in range(len(sub_cities)):
             centers.append(helps.centroid(sub_cities[j]))
-        labels = helps.K_Nearest(centers, 2)
+
+        sub_adj_matrix = helps.adjacent_matrix(centers)
+        labels = helps.K_Nearest(sub_adj_matrix, 2)
         sub_cities, sub_cities_index, elites = helps.merge_sub_cities(sub_cities, sub_cities_index, elites, labels)
     return best_fitness, best_tour
 
 
-def sub_GA(places, places_index, adj_matrix, NIND, Max_iter, elite):
+def sub_GA(places, places_index, adj_matrix, NIND, Max_iter, elite, K):
     """================================实例化问题对象============================"""
-    problem = MyProblem(places, places_index)  # 生成问题对象
+    problem = MyProblem(places, places_index, adj_matrix)  # 生成问题对象
     """==================================种群设置=============================="""
     Encoding = 'P'  # 编码方式，采用排列编码
     Field = ea.crtfld(Encoding, problem.varTypes, problem.ranges, problem.borders)  # 创建区域描述器
     population = ea.Population(Encoding, Field, NIND)  # 实例化种群对象（此时种群还没被初始化，仅仅是完成种群对象的实例化）
-    population.Chrom = initial.init_population(places_index, adj_matrix, NIND)
-
+    population.Chrom = initial.init_population(places_index, adj_matrix, NIND, K)
     prophetPop = ea.Population(Encoding, Field, 1)
     prophetPop.Chrom = np.array([elite])
 
@@ -58,6 +65,6 @@ def sub_GA(places, places_index, adj_matrix, NIND, Max_iter, elite):
     [BestIndi, population] = myAlgorithm.run(prophetPop)  # 执行算法模板，得到最优个体以及最后一代种群
 
     """==================================输出结果=============================="""
-    return BestIndi.ObjV[0], BestIndi.Phen[0, :]
+    return BestIndi.ObjV[0], list(BestIndi.Phen[0, :])
 
 

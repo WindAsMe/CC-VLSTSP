@@ -4,7 +4,7 @@ import helps
 
 
 class MyProblem(ea.Problem):  # 继承Problem父类
-    def __init__(self, places, indexes):
+    def __init__(self, places, indexes, adj_matrix):
         name = 'MyProblem'  # 初始化name（函数名称，可以随意设置）
         M = 1  # 初始化M（目标维数）
         maxormins = [1]  # 初始化maxormins（目标最小最大化标记列表，1：最小化该目标；-1：最大化该目标）
@@ -19,18 +19,22 @@ class MyProblem(ea.Problem):  # 继承Problem父类
         # 新增一个属性存储旅行地坐标
         self.places = np.array(places)
         self.indexes = np.array(indexes)
+        self.adj_matrix = adj_matrix
 
     def aimFunc(self, pop):  # 目标函数
-        X = pop.Phen.copy()  # 得到决策变量矩阵
         size = len(self.indexes)
         ObjV = []  # 存储所有种群个体对应的总路程
-        for x in X:
-            final_index = int(np.where(self.indexes == (x[size-1]))[0])
-            distance = helps.Dis(self.places[0], self.places[final_index])
-            current = 0
+        for x in pop.Phen:
+            real_index = index_transform(x, self.indexes)
+            distance = self.adj_matrix[real_index[0]][real_index[size-1]]
             for j in range(1, size):
-                next = int(np.where(self.indexes == (x[j]))[0])
-                distance += helps.Dis(self.places[current], self.places[next])
-                current = next
+                distance += self.adj_matrix[real_index[j]][real_index[j-1]]
             ObjV.append(distance)
         pop.ObjV = np.array([ObjV]).T
+
+
+def index_transform(phen, indexes):
+    real_index = []
+    for gene in phen:
+        real_index.append(int(np.where(indexes == gene)[0]))
+    return real_index

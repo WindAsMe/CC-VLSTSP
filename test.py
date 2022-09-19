@@ -1,24 +1,9 @@
+import random
 import numpy as np
-from geatpy import scaling
-import os
-from Initialization import init_population
-import helps
 
+a = [[15, 6, 16, 14, 13, 11, 7, 0, 5, 1], [2, 3, 8, 9, 33, 22, 21, 20, 19, 10], [17, 18, 52, 28, 27, 26, 25, 24, 4, 12], [23, 38, 39, 40, 41, 42, 43, 37, 36, 35], [29, 30, 31, 32, 49, 48, 47, 46, 45, 34], [67, 63, 44, 53, 54, 61, 77, 76, 74, 73], [50, 57, 62, 64, 65, 69, 56, 66, 55, 51], [58, 71, 72, 75, 79, 84, 85, 70, 59, 60], [68, 78, 80, 81, 93, 91, 87, 86, 83, 82], [88, 99, 100, 101, 104, 105, 111, 98, 97, 92], [90, 110, 116, 95, 94, 109, 103, 102, 96, 89], [106, 107, 108, 112, 125, 124, 123, 120, 117, 113], [114, 122, 126, 127, 128, 129, 119, 118, 115, 121], [130]]
 
-data_path = os.path.dirname(os.path.abspath(__file__)) + "/TSP/xqf131.tsp"
-cities = helps.read_tsp(data_path, 8)
-label = helps.K_Nearest(cities, 20)
-sub_cities, sub_cities_num = helps.divide_cities(cities, label)
-adj_matrix = helps.adjacent_matrix(cities)
-NIND = 10
-print(sub_cities_num[4])
-pop = init_population(sub_cities_num[4], adj_matrix, NIND, K=20, strategy="softmax")
-print(pop)
-
-Route = []
-for i in pop[0]:
-    Route.append(cities[i])
-
-helps.draw_tour(Route, "xqf131", dis=None)
+b = np.array(a).reshape(1, -1)[0]
+print(b)
 
 

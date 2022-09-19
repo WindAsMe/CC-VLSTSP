@@ -66,6 +66,7 @@ soea_SEGA_templet : class - Strengthen Elitist GA Algorithm(增强精英保留�
         if prophetPop is not None:
             population = (prophetPop + population)[:NIND]  # 插入先知种群
         self.call_aimFunc(population)  # 计算种群的目标函数值
+
         population.FitnV = ea.scaling(population.ObjV, population.CV, self.problem.maxormins)  # 计算适应度
         # ===========================开始进化============================
         while not self.terminated(population):
