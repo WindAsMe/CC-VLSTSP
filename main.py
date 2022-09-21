@@ -28,12 +28,14 @@ if __name__ == "__main__":
         Greedy_best_path = os.path.dirname(os.path.abspath(__file__)) + "/Data/Greedy/best_Dis/" + names[inst] + ".csv"
 
         cities = helps.read_tsp(data_path + tsp_files[inst], skip)
-        adj_matrix = helps.adjacent_matrix(cities)
 
         for run in range(1):
             # GA.GA_exe(cities, NIND, Max_iter)
-            best_fitness, best_tour = hCCGA.hCCGA_exe(cities, NIND, Max_iter, adj_matrix, sub_size=20, K=10)
-            print(helps.tour_Dis(best_tour, adj_matrix))
-            print(best_fitness, best_tour)
+            # best_fitness, best_tour = hCCGA.hCCGA_exe(list(range(0, scales[inst])), cities, NIND, Max_iter, sub_size=20, K=10)
+            # print(helps.tour_Dis(best_tour, adj_matrix))
+            # print(best_fitness, best_tour)
+            route = initial.greedy_initial(list(range(0, scales[inst])), cities)
+            dis = helps.tour_Dis(route, cities)
+            print(dis)
 
 

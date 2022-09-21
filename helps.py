@@ -22,8 +22,8 @@ def read_tsp(file_path, skip):
     return points
 
 
-def K_Nearest(adj_matrix, sub_size):
-    size = len(adj_matrix)
+def K_Nearest(cities, sub_size):
+    size = len(cities)
     num = int(size / sub_size)
     rest = size
     if size % sub_size != 0:
@@ -38,8 +38,7 @@ def K_Nearest(adj_matrix, sub_size):
         dis = [float("inf")] * size
         for j in range(i+1, size):
             if clusters[j] == 0:
-                dis[j] = adj_matrix[i][j]
-
+                dis[j] = Dis(cities[i], cities[j])
         sort_index = np.argsort(dis)
         if rest >= sub_size:
             sort_index = sort_index[0:sub_size-1]
@@ -152,11 +151,11 @@ def iter_allocate(Max_iter, layers):
     return iters
 
 
-def tour_Dis(tour, adj_matrix):
+def tour_Dis(tour, cities):
     size = len(tour)
-    dis = adj_matrix[tour[0]][tour[size-1]]
+    dis = Dis(cities[tour[0]], cities[tour[size-1]])
     for i in range(1, size):
-        dis += adj_matrix[tour[i]][tour[i-1]]
+        dis += Dis(cities[tour[i]], cities[tour[i-1]])
     return dis
 
 

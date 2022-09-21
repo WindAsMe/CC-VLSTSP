@@ -43,16 +43,15 @@ def next_city(current, candidates, sub_cities):
     return next
 
 
-def greedy_initial(sub_cities, adj_matrix):
-    temp_sub_cities = copy.deepcopy(sub_cities)
-    route = [temp_sub_cities[0]]
-    temp_sub_cities.remove(temp_sub_cities[0])
-    while len(temp_sub_cities) > 0:
-        current = route[len(route)-1]
+def greedy_initial(sub_indexes, sub_cities):
+    temp_sub_indexes = copy.deepcopy(sub_indexes)
+    route = [temp_sub_indexes.pop(0)]
+    current = route[len(route)-1]
+    while len(temp_sub_indexes) > 0:
         Distance = []
-        for city in temp_sub_cities:
-            Distance.append(adj_matrix[city][current])
+        for i in range(len(temp_sub_indexes)):
+            Distance.append(helps.Dis(sub_cities[current], sub_cities[temp_sub_indexes[i]]))
         next = np.argmin(Distance)
-        route.append(temp_sub_cities[next])
-        temp_sub_cities.remove(temp_sub_cities[next])
+        route.append(temp_sub_indexes.pop(next))
+        current = route[len(route) - 1]
     return route

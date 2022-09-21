@@ -7,9 +7,9 @@ from EAs.templet.hCCGA_templet import soea_SEGA_templet
 from EAs import initial
 
 
-def hCCGA_exe(cities, NIND, Max_iter, adj_matrix, sub_size=100, K=50):
+def hCCGA_exe(indexes, cities, NIND, Max_iter, sub_size=100, K=50):
 
-    labels = helps.K_Nearest(adj_matrix, sub_size)
+    labels = helps.K_Nearest(cities, sub_size)
     categories = int((len(cities) + sub_size - 1) / sub_size)
     layer = math.ceil(math.log2(categories)) + 1
     iters = helps.iter_allocate(Max_iter, layer)
