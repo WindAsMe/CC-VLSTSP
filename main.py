@@ -16,26 +16,26 @@ if __name__ == "__main__":
     # names = ['ics39603', 'rbz43748', 'fht47608', 'fna52057', 'bna56769', 'dan59296', 'sra104815', 'ara238025',
     #          'lra498378', 'lrb744710']
     # scales = [39603, 43748, 47608, 52057, 56769, 59296, 104815, 238025, 498378, 744710]
-    tsp_files = ['xqf131.tsp']
-    names = ['xqf131']
-    scales = [131]
+    tsp_files = ['dbj2924.tsp', 'pia3056.tsp', 'xva2993.tsp']
+    names = ['dbj2924', 'pia3056', 'xva2993']
+    scales = [2924, 3056, 2993]
     skip = 8
-    trial_runs = 25
-    NIND = 10
-    Max_iter = 50
+    trial_runs = 20
+    NIND = 100
+    Max_iter = 500
 
-    for inst in range(1):
-        Greedy_best_path = os.path.dirname(os.path.abspath(__file__)) + "/Data/Greedy/best_Dis/" + names[inst] + ".csv"
-
+    for inst in range(len(scales)):
+        hCCGA_best_path = os.path.dirname(os.path.abspath(__file__)) + "/Data/hCCGA/best_Dis/" + names[inst] + ".csv"
+        hCCGA_time_path = os.path.dirname(os.path.abspath(__file__)) + "/Data/hCCGA/time/" + names[inst] + ".csv"
         cities = helps.read_tsp(data_path + tsp_files[inst], skip)
 
         for run in range(1):
-            # GA.GA_exe(cities, NIND, Max_iter)
-            # best_fitness, best_tour = hCCGA.hCCGA_exe(list(range(0, scales[inst])), cities, NIND, Max_iter, sub_size=20, K=10)
-            # print(helps.tour_Dis(best_tour, adj_matrix))
-            # print(best_fitness, best_tour)
-            route = initial.greedy_initial(list(range(0, scales[inst])), cities)
-            dis = helps.tour_Dis(route, cities)
-            print(dis)
+            CCGA_time_start = time.time()
+            best_fitness, best_tour = hCCGA.hCCGA_exe(cities, NIND, Max_iter, sub_size=100, K=50)
+            CCGA_time_end = time.time()
+            print(best_fitness)
+            helps.write_result(hCCGA_time_path, [CCGA_time_end - CCGA_time_start])
+            helps.write_result(hCCGA_best_path, [best_fitness])
+
 
 

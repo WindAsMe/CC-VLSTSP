@@ -70,16 +70,12 @@ def draw_city_clustering(data, label, name):
 
 def divide_cities(cities, label):
     category = int(max(label))
-    sub_cities = []
     sub_cities_num = []
     for i in range(category):
-        sub_cities.append([])
         sub_cities_num.append([])
-
     for i in range(len(cities)):
-        sub_cities[int(label[i] - 1)].append(cities[i])
         sub_cities_num[int(label[i] - 1)].append(i)
-    return sub_cities, sub_cities_num
+    return sub_cities_num
 
 
 def sub_num_real_num(sub_route, real_route):
@@ -117,27 +113,22 @@ def adjacent_matrix(cities):
     return matrix
 
 
-def centroid(sub_cities):
-    cities = np.array(sub_cities)
-    return [np.mean(cities[:, 0]), np.mean(cities[:, 1])]
+def centroid(sub_indexes, cities):
+    center = []
+    for index in sub_indexes:
+        center.append(cities[index])
+    center = np.array(center)
+    return [np.mean(center[:, 0]), np.mean(center[:, 1])]
 
 
-def merge_sub_cities(sub_cities, sub_cities_index, elites, label):
+def elites_combine(elites, label):
     category = int(max(label))
-    merged_sub_cities = []
-    merged_sub_cities_index = []
     merged_elites = []
-
     for i in range(category):
-        merged_sub_cities.append([])
-        merged_sub_cities_index.append([])
         merged_elites.append([])
-
-    for i in range(len(sub_cities)):
-        merged_sub_cities[int(label[i] - 1)].extend(sub_cities[i])
-        merged_sub_cities_index[int(label[i] - 1)].extend(sub_cities_index[i])
+    for i in range(len(label)):
         merged_elites[int(label[i] - 1)].extend(elites[i])
-    return merged_sub_cities, merged_sub_cities_index, merged_elites
+    return merged_elites
 
 
 def iter_allocate(Max_iter, layers):
