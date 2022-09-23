@@ -5,6 +5,7 @@ from EAs.Problem import MyProblem
 import numpy as np
 from EAs.templet.hCCGA_templet import soea_SEGA_templet
 from EAs import initial
+from EAs.SA import SimAnneal
 
 
 def hCCGA_exe(cities, NIND, Max_iter, sub_size=100, K=50):
@@ -20,7 +21,6 @@ def hCCGA_exe(cities, NIND, Max_iter, sub_size=100, K=50):
         sub_best_tour = initial.greedy_initial(sub_indexes[i], cities)
         elites.append(sub_best_tour)
         best_tour.extend(sub_best_tour)
-
     best_fitness = helps.tour_Dis(best_tour, cities)
 
     """The layer of hierarchy"""
@@ -36,7 +36,8 @@ def hCCGA_exe(cities, NIND, Max_iter, sub_size=100, K=50):
 
         temp_best_tour = helps.list_combine(elites)
         temp_best_fitness = helps.tour_Dis(temp_best_tour, cities)
-        print("current best: ", best_fitness)
+        print("global best: ", best_fitness)
+        print("current best: ", temp_best_fitness)
         if temp_best_fitness < best_fitness:
             best_fitness = temp_best_fitness
             best_tour = temp_best_tour

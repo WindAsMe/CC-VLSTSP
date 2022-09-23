@@ -21,17 +21,24 @@ class SimAnneal(object):
         self.best_fitness = float("Inf")
         self.fitness_list = []
 
-    def initial_solution(self):
+
+    def anneal(self, Max_iter, elite):
         """
-        random initialization
+        Execute simulated annealing algorithm.
         """
-        solution = np.random.permutation(self.nodes)
-        cur_fit = self.fitness(solution)
-        if cur_fit < self.best_fitness:  # If best found so far, update best fitness
-            self.best_fitness = cur_fit
-            self.best_solution = solution
-        self.fitness_list.append(cur_fit)
-        return solution, cur_fit
+        self.cur_solution = elite
+        self.cur_fitness = self.fitness(elite)
+        iter = 0
+        while self.T >= self.stopping_temperature and iter < Max_iter:
+            iter += 1
+            candidate = list(self.cur_solution)
+            l = random.randint(2, self.N - 1)
+            i = random.randint(0, self.N - l)
+            candidate[i: (i + l)] = reversed(candidate[i: (i + l)])
+            self.accept(candidate)
+            self.T *= self.alpha
+            self.fitness_list.append(self.cur_fitness)
+        return self.best_solution, self.best_fitness
 
     def dist(self, node_0, node_1):
         """
@@ -44,9 +51,10 @@ class SimAnneal(object):
         """
         Total distance of the current solution path.
         """
-        cur_fit = 0
-        for i in range(self.N):
-            cur_fit += self.dist(solution[i % self.N], solution[(i + 1) % self.N])
+        size = len(solution)
+        cur_fit = self.dist(solution[0], solution[size-1])
+        for i in range(1, size):
+            cur_fit += self.dist(solution[i], solution[i-1])
         return cur_fit
 
     def p_accept(self, candidate_fitness):
@@ -70,45 +78,18 @@ class SimAnneal(object):
             if random.random() < self.p_accept(candidate_fitness):
                 self.cur_fitness, self.cur_solution = candidate_fitness, candidate
 
-    def anneal(self):
-        """
-        Execute simulated annealing algorithm.
-        """
-        # Initialize with the greedy solution.
-        self.cur_solution, self.cur_fitness = self.initial_solution()
 
-        # print("Starting annealing.")
-        while self.T >= self.stopping_temperature and self.iteration < self.stopping_iter:
-            candidate = list(self.cur_solution)
-            l = random.randint(2, self.N - 1)
-            i = random.randint(0, self.N - l)
-            candidate[i : (i + l)] = reversed(candidate[i : (i + l)])
-            self.accept(candidate)
-            self.T *= self.alpha
-            self.iteration += 1
-
-            self.fitness_list.append(self.cur_fitness)
-
-        # print("Best fitness obtained: ", self.best_fitness)
-        return self.best_fitness
+    def reset(self, T=-1, alpha=-1, stopping_T=-1, stopping_iter=-1):
+        self.N = len(self.coords)
+        self.T = math.sqrt(self.N) if T == -1 else T
+        self.T_save = self.T
+        self.alpha = 0.995 if alpha == -1 else alpha
+        self.stopping_temperature = 1e-8 if stopping_T == -1 else stopping_T
+        self.stopping_iter = 100000 if stopping_iter == -1 else stopping_iter
+        self.iteration = 1
+        self.nodes = [i for i in range(self.N)]
+        self.best_solution = None
+        self.best_fitness = float("Inf")
+        self.fitness_list = []
 
 
-    def batch_anneal(self, times=10):
-        """
-        Execute simulated annealing algorithm `times` times, with random initial solutions.
-        """
-        for i in range(1, times + 1):
-            print(f"Iteration {i}/{times} -------------------------------")
-            self.T = self.T_save
-            self.iteration = 1
-            self.cur_solution, self.cur_fitness = self.initial_solution()
-            self.anneal()
-
-    def plot_learning(self):
-        """
-        Plot the fitness through iterations.
-        """
-        plt.plot([i for i in range(len(self.fitness_list))], self.fitness_list)
-        plt.ylabel("Fitness")
-        plt.xlabel("Iteration")
-        plt.show()
