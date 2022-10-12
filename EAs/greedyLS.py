@@ -3,15 +3,20 @@ import random
 import numpy as np
 
 
-def gLS(cities, tour, func, Max_iter):
+def gLS(cities, tour, func, Max_iter, Max_TB_len):
     length = len(tour) - 2
     best_Dis = func(tour, cities)
     best_Tour = tour
+    Tabu = []
     for i in range(Max_iter):
         r1, r2 = 0, 0
-        while r1 == r2:
+        while r1 == r2 or [r1, r2] in Tabu:
             r1, r2 = random.randint(1, length), random.randint(1, length)
-        r1, r2 = min(r1, r2), max(r1, r2)
+            r1, r2 = min(r1, r2), max(r1, r2)
+        if len(Tabu) >= Max_TB_len:
+            Tabu.pop(0)
+            Tabu.append([r1, r2])
+
         temp_tour, temp_Dis = search(cities, tour, r1, r2, func)
         if temp_Dis < best_Dis:
             best_Dis = temp_Dis

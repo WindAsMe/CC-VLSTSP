@@ -8,7 +8,7 @@ import benchmark
 from EAs.greedyLS import gLS
 
 
-def hCCGA_exe(cities, knownTour, NIND, Max_iter, func, sub_size=100):
+def hCCGA_exe(cities, knownTour, Max_iter, func, sub_size=100):
 
     categories = int((len(cities) + sub_size - 1) / sub_size)
     best_Dis = func(knownTour, cities)
@@ -17,7 +17,6 @@ def hCCGA_exe(cities, knownTour, NIND, Max_iter, func, sub_size=100):
     print("initial Dis: ", best_Dis)
     """The layer of hierarchy"""
     for i in range(layer):
-        print(len(sub_tours))
         for j in range(len(sub_tours)):
             sub_tours[j] = gLS(cities, sub_tours[j], func, Max_iter)
         sub_tours = helps.subtour_merge(sub_tours)
