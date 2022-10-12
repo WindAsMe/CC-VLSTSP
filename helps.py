@@ -98,6 +98,18 @@ def write_result(path, data):
         writer.writerow(data)
 
 
+def write_tour(path, name, tour, dis, Dim):
+    with open(path + name, 'a') as f:
+        f.write("NAME : " + name + "." + str(dis) + ".tour\n")
+        f.write("COMMENT : Length = " + str(dis) + ", found by Rui Zhong, Enzhi Zhang, and Masaharu Munetomo\n")
+        f.write("TYPE : TOUR\n")
+        f.write("DIMENSION : " + str(Dim) + "\n")
+        f.write("TOUR_SECTION\n")
+        for city in tour:
+            f.write(str(city) + "\n")
+
+
+
 def draw_tour(Route, name, dis=None):
     Route = np.array(Route)
     plt.plot(Route[:, 0], Route[:, 1], 'o--')

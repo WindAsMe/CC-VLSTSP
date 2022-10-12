@@ -12,13 +12,14 @@ def hCCGA_exe(cities, knownTour, Max_iter, func, sub_size=100):
 
     categories = int((len(cities) + sub_size - 1) / sub_size)
     best_Dis = func(knownTour, cities)
+    best_tour = knownTour
     layer = math.ceil(math.log2(categories)) + 1
     sub_tours = helps.divide_cities(knownTour, categories, sub_size)
     print("initial Dis: ", best_Dis)
     """The layer of hierarchy"""
     for i in range(layer):
         for j in range(len(sub_tours)):
-            sub_tours[j] = gLS(cities, sub_tours[j], func, Max_iter)
+            sub_tours[j] = gLS(cities, sub_tours[j], func, Max_iter, 100)
         sub_tours = helps.subtour_merge(sub_tours)
         temp_tour = helps.tour_combine(sub_tours)
         temp_Dis = func(temp_tour, cities)
@@ -27,15 +28,7 @@ def hCCGA_exe(cities, knownTour, Max_iter, func, sub_size=100):
             best_tour = temp_tour
         print("best Dis: ", best_Dis)
 
-    #
-    #     temp_best_tour = helps.list_combine(elites)
-    #     temp_best_fitness = helps.tour_Dis(temp_best_tour, cities)
-    #     print("global best: ", best_fitness)
-    #     print("current best: ", temp_best_fitness)
-    #     if temp_best_fitness < best_fitness:
-    #         best_fitness = temp_best_fitness
-    #         best_tour = temp_best_tour
-    # return best_fitness, best_tour
+    return best_Dis, best_tour
 
 
 
