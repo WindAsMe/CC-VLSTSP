@@ -2,6 +2,7 @@ import numpy as np
 import csv
 import pandas as pd
 import matplotlib.pyplot as plt
+from math import atan2
 
 
 def read_matrix(file_path):
@@ -18,8 +19,14 @@ def read_tsp(file_path, skip):
     df = pd.read_csv(file_path, sep=" ", skiprows=skip, header=None, encoding='utf8')
     city_x = np.array(df[1][0:-1])
     city_y = np.array(df[2][0:-1])
-    points = list(zip(city_x, city_y))
-    return points
+    cities = list(zip(city_x, city_y))
+    return cities
+
+
+def read_bestTour(file_path, skip):
+    df = pd.read_csv(file_path, sep=" ", skiprows=skip, header=None, encoding='utf8')
+    tour = np.array(list(map(int, np.array(df[0][0:-1])))) - 1
+    return list(tour)
 
 
 def K_Nearest(cities, sub_size):
@@ -36,14 +43,14 @@ def K_Nearest(cities, sub_size):
         flag += 1
         clusters[i] = flag
         dis = [float("inf")] * size
-        for j in range(i+1, size):
+        for j in range(i + 1, size):
             if clusters[j] == 0:
                 dis[j] = Dis(cities[i], cities[j])
         sort_index = np.argsort(dis)
         if rest >= sub_size:
-            sort_index = sort_index[0:sub_size-1]
+            sort_index = sort_index[0:sub_size - 1]
         else:
-            sort_index = sort_index[0:rest-1]
+            sort_index = sort_index[0:rest - 1]
         for ind in sort_index:
             clusters[ind] = flag
         rest -= sub_size
@@ -58,7 +65,7 @@ def draw_city_clustering(data, label, name):
     font_title = {'size': 18}
     plt.title(name, font_title)
     category = max(label)
-    for i in range(1, int(category+1)):
+    for i in range(1, int(category + 1)):
         sub_data = []
         for j in range(len(data)):
             if label[j] == i:
@@ -68,14 +75,14 @@ def draw_city_clustering(data, label, name):
     plt.show()
 
 
-def divide_cities(cities, label):
-    category = int(max(label))
-    sub_cities_num = []
-    for i in range(category):
-        sub_cities_num.append([])
-    for i in range(len(cities)):
-        sub_cities_num[int(label[i] - 1)].append(i)
-    return sub_cities_num
+def divide_cities(knownTour, categories, sub_size):
+    size = len(knownTour)
+    sub_tours = []
+    for i in range(categories):
+        start = i * sub_size
+        end = min((i + 1) * sub_size, size)
+        sub_tours.append(knownTour[start:end])
+    return sub_tours
 
 
 def sub_num_real_num(sub_route, real_route):
@@ -106,7 +113,7 @@ def adjacent_matrix(cities):
     size = len(cities)
     matrix = np.zeros((size, size))
     for i in range(size):
-        for j in range(i+1, size):
+        for j in range(i + 1, size):
             dis = Dis(cities[i], cities[j])
             matrix[i][j] = dis
             matrix[j][i] = dis
@@ -121,39 +128,19 @@ def centroid(sub_indexes, cities):
     return [np.mean(center[:, 0]), np.mean(center[:, 1])]
 
 
-def elites_combine(elites, label):
-    category = int(max(label))
-    merged_elites = []
-    for i in range(category):
-        merged_elites.append([])
-    for i in range(len(label)):
-        merged_elites[int(label[i] - 1)].extend(elites[i])
-    return merged_elites
+def subtour_merge(sub_tours):
+    new_tours = []
+    size = len(sub_tours)
+    for i in range(0, size, 2):
+        temp = sub_tours[i]
+        if i + 1 < size:
+            temp.extend(sub_tours[i+1])
+        new_tours.append(temp)
+    return new_tours
 
 
-def iter_allocate(Max_iter, layers):
-    ave_iter = Max_iter / layers
-    iters = []
-    amount = 0
-    for i in range(layers-1):
-        iters.append(int(ave_iter))
-        amount += int(ave_iter)
-    iters.append(int(Max_iter - amount))
-    return iters
-
-
-def tour_Dis(tour, cities):
-    size = len(tour)
-    dis = Dis(cities[tour[0]], cities[tour[size-1]])
-    for i in range(1, size):
-        dis += Dis(cities[tour[i]], cities[tour[i-1]])
-    return dis
-
-
-def list_combine(matrix):
+def tour_combine(matrix):
     combined_list = []
     for row in matrix:
         combined_list.extend(row)
     return combined_list
-
-
