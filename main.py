@@ -25,7 +25,7 @@ if __name__ == "__main__":
             func = benchmark.tour_Dis
         else:
             func = benchmark.Geo_tour_Dis
-        hCCGA_best_path = data_path + "/Data/hCC_gLS/best_Dis/" + names[inst] + ".csv"
+        hCCGA_best_path = data_path + "/Data/hCC_gLS/best_Dis/"
         hCCGA_time_path = data_path + "/Data/hCC_gLS/time/" + names[inst] + ".csv"
         knownTour_path = data_path + "/KnownTour/"
         cities_path = data_path + "/TSP/"
@@ -37,7 +37,7 @@ if __name__ == "__main__":
             CCGA_time_start = time.time()
             best_Dis, best_tour = hCCGA.hCCGA_exe(cities, knownTour, Max_iter, func, sub_size=100)
             CCGA_time_end = time.time()
-            helps.write_result(hCCGA_time_path, [CCGA_time_end - CCGA_time_start])
+            helps.write_result(hCCGA_time_path, [int(CCGA_time_end - CCGA_time_start)])
             helps.write_tour(hCCGA_best_path, names[inst], best_tour, best_Dis, scales[inst])
 
 
