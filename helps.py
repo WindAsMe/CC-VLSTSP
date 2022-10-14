@@ -109,7 +109,6 @@ def write_tour(path, name, tour, dis, Dim):
             f.write(str(city) + "\n")
 
 
-
 def draw_tour(Route, name, dis=None):
     Route = np.array(Route)
     plt.plot(Route[:, 0], Route[:, 1], 'o--')
