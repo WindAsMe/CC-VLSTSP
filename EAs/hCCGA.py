@@ -15,6 +15,7 @@ def hCCGA_exe(cities, knownTour, Max_iter, func, sub_size=100):
     best_tour = knownTour
     layer = math.ceil(math.log2(categories)) + 1
     sub_tours = helps.divide_cities(knownTour, categories, sub_size)
+    trace = []
     print("initial Dis: ", best_Dis)
     """The layer of hierarchy"""
     for i in range(layer):
@@ -27,8 +28,8 @@ def hCCGA_exe(cities, knownTour, Max_iter, func, sub_size=100):
             best_Dis = temp_Dis
             best_tour = temp_tour
         print("best Dis: ", best_Dis)
-
-    return best_Dis, best_tour
+        trace.append(best_Dis)
+    return best_Dis, best_tour, trace
 
 
 

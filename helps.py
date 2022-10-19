@@ -98,8 +98,8 @@ def write_result(path, data):
         writer.writerow(data)
 
 
-def write_tour(path, name, tour, dis, Dim):
-    with open(path + name, 'a') as f:
+def write_tour(path, name, tour, dis, Dim, times):
+    with open(path + name + "." + str(times), 'a') as f:
         f.write("NAME : " + name + "." + str(dis) + ".tour\n")
         f.write("COMMENT : Length = " + str(dis) + ", found by Rui Zhong, Enzhi Zhang, and Masaharu Munetomo\n")
         f.write("TYPE : TOUR\n")
