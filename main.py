@@ -35,9 +35,8 @@ if __name__ == "__main__":
 
         for run in range(2):
             CCGA_time_start = time.time()
-            # best_Dis, best_tour, obj_trace = hCCGA.hCCGA_exe(cities, knownTour, Max_iter, func, sub_size=100)
+            best_Dis, best_tour, obj_trace = hCCGA.hCCGA_exe(cities, knownTour, Max_iter, func, sub_size=100)
             CCGA_time_end = time.time()
-            best_Dis, best_tour, obj_trace = 0, [1,2], [1,2]
             helps.write_result(hCCGA_time_path, [int(CCGA_time_end - CCGA_time_start)])
             helps.write_result(hCCGA_trace_path, obj_trace)
             helps.write_tour(hCCGA_best_path, names[inst], best_tour, best_Dis, scales[inst], run)
